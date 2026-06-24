@@ -12,8 +12,17 @@ os.makedirs("transcripts", exist_ok=True)
 TRANSCRIPT_FILE = datetime.now().strftime("transcripts/voice_call_%Y%m%d_%H%M%S.txt")
 NO_SPEECH_COUNT = 0
 
+
 VOICE_SCENARIO_FILE = os.getenv("VOICE_SCENARIO_FILE", "new_patient.txt")
-load_persona(VOICE_SCENARIO_FILE)
+
+
+def set_voice_scenario(scenario_file):
+    global VOICE_SCENARIO_FILE
+    VOICE_SCENARIO_FILE = scenario_file
+    load_persona(VOICE_SCENARIO_FILE)
+
+
+set_voice_scenario(VOICE_SCENARIO_FILE)
 
 
 def get_opening_message():
@@ -31,6 +40,9 @@ def get_opening_message():
     if "reschedule" in scenario_name:
         return "Hello, this is Athena. I would like to reschedule my appointment."
 
+    if "registration" in scenario_name or "new_registration" in scenario_name:
+        return "Hello, this is Athena. I would like to register as a new patient."
+
     return "Hello, this is Athena. I would like to schedule an appointment."
 
 
@@ -46,13 +58,16 @@ def twiml_response(response):
 @app.route("/voice", methods=["GET", "POST"])
 def voice():
     response = VoiceResponse()
+    scenario_file = request.args.get("scenario") or request.form.get("scenario")
+    if scenario_file:
+        set_voice_scenario(scenario_file)
 
     opening_message = get_opening_message()
     save_turn("Athena", opening_message)
 
     gather = Gather(
         input="speech",
-        action="/process_speech",
+        action=f"/process_speech?scenario={VOICE_SCENARIO_FILE}",
         method="POST",
         speech_timeout="auto",
         timeout=5,
@@ -75,6 +90,9 @@ def voice():
 def process_speech():
     response = VoiceResponse()
     global NO_SPEECH_COUNT
+    scenario_file = request.args.get("scenario") or request.form.get("scenario")
+    if scenario_file:
+        set_voice_scenario(scenario_file)
 
     speech_result = request.form.get("SpeechResult", "").strip()
     save_turn("Agent", speech_result if speech_result else "[No speech detected]")
@@ -125,7 +143,7 @@ def process_speech():
 
     gather = Gather(
         input="speech",
-        action="/process_speech",
+        action=f"/process_speech?scenario={VOICE_SCENARIO_FILE}",
         method="POST",
         speech_timeout="auto",
         timeout=5,
@@ -135,7 +153,7 @@ def process_speech():
     response.append(gather)
 
     response.pause(length=1)
-    response.redirect("/process_speech", method="POST")
+    response.redirect(f"/process_speech?scenario={VOICE_SCENARIO_FILE}", method="POST")
 
     return twiml_response(response)
 

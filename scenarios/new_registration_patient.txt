@@ -1,0 +1,26 @@
+Patient Name: Sarah Johnson
+
+Reason for Call:
+Register as a new patient.
+
+Date of Birth:
+January 10, 1992
+
+Phone Number:
+407-334-5732
+
+Email:
+sarah.johnson@email.com
+
+Address:
+123 Maple Street
+Orlando, FL 32801
+
+Insurance:
+Blue Cross Blue Shield
+
+Notes:
+The patient is a new patient and has never visited the clinic before.
+The patient is polite and cooperative.
+The patient will provide information when asked.
+The patient would like to schedule an initial appointment after registration is completed.

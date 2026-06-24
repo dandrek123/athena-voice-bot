@@ -25,6 +25,8 @@ def mock_response(clinic_message):
         return "Yes, my member ID is B C B S one two three four five six."
 
     if "happy to help" in message or "how can i help" in message or "how may i help" in message:
+        if "registration" in current_persona.lower() or "new patient" in current_persona.lower():
+            return "I would like to register as a new patient."
         return "I would like to schedule an appointment."
 
     if "what brings you in" in message or "reason for" in message or "reason for your visit" in message:
@@ -48,14 +50,14 @@ def mock_response(clinic_message):
     if "insurance" in message:
         return "I have Blue Cross Blue Shield insurance."
 
+    if "email" in message:
+        return "My email is sarah dot johnson at email dot com."
+
     if "address" in message or "where do you live" in message:
         return "My address is one two three Maple Street, Orlando, Florida."
 
     if "phone" in message or "number" in message:
         return "My phone number is four zero seven, three three four, five seven three two."
-
-    if "email" in message:
-        return "My email is sarah dot johnson at email dot com."
 
     if "cancel" in message:
         return "I would like to cancel my appointment if possible."

@@ -1,6 +1,7 @@
-
-
+import argparse
 import os
+from urllib.parse import urlencode
+
 from dotenv import load_dotenv
 from twilio.rest import Client
 
@@ -11,6 +12,26 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 TEST_TO_PHONE_NUMBER = os.getenv("TEST_TO_PHONE_NUMBER")
 VOICE_WEBHOOK_URL = os.getenv("VOICE_WEBHOOK_URL")
+
+SCENARIOS = {
+    "appointment": "new_patient.txt",
+    "refill": "refill_patient.txt",
+    "insurance": "insurance_patient.txt",
+    "cancel": "cancel_patient.txt",
+    "reschedule": "reschedule_patient.txt",
+    "registration": "new_registration_patient.txt",
+}
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Start an Athena voice bot test call.")
+    parser.add_argument(
+        "--scenario",
+        choices=SCENARIOS.keys(),
+        default="appointment",
+        help="Voice scenario to run. Defaults to appointment.",
+    )
+    return parser.parse_args()
 
 
 def validate_environment():
@@ -36,24 +57,33 @@ def validate_environment():
         raise ValueError(f"Missing required environment variables: {missing_text}")
 
 
-def make_test_call():
+def build_voice_url(scenario):
+    scenario_file = SCENARIOS[scenario]
+    query_string = urlencode({"scenario": scenario_file})
+    return f"{VOICE_WEBHOOK_URL}?{query_string}"
+
+
+def make_test_call(scenario):
     validate_environment()
 
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    voice_url = build_voice_url(scenario)
 
     call = client.calls.create(
         to=TEST_TO_PHONE_NUMBER,
         from_=TWILIO_PHONE_NUMBER,
-        url=VOICE_WEBHOOK_URL,
+        url=voice_url,
         record=True,
     )
 
     print("Test call started successfully.")
+    print(f"Scenario: {scenario}")
     print(f"Call SID: {call.sid}")
     print(f"From: {TWILIO_PHONE_NUMBER}")
     print(f"To: {TEST_TO_PHONE_NUMBER}")
-    print(f"Webhook: {VOICE_WEBHOOK_URL}")
+    print(f"Webhook: {voice_url}")
 
 
 if __name__ == "__main__":
-    make_test_call()
+    args = parse_args()
+    make_test_call(args.scenario)
