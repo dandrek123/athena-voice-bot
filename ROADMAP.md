@@ -10,8 +10,10 @@ Phase 2
 ✓ Voice playback
 
 Phase 3
-□ Speech-to-text
-□ Dynamic conversation
+✓ Speech-to-text
+✓ Dynamic conversation
 □ Audio recording storage
-□ Bug report generation
+□ Automatic call reports
+□ Gemini live conversations
+□ Web dashboard
 □ Pretty Good AI challenge submission
