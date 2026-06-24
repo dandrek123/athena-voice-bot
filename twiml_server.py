@@ -90,6 +90,20 @@ def process_speech():
 
     save_turn("Athena", reply)
 
+    reply_text = reply.lower()
+    should_end_call = (
+        "that is all" in reply_text
+        or "nothing else" in reply_text
+        or "thank you" in reply_text
+        or "goodbye" in reply_text
+        or "bye" in reply_text
+    )
+
+    if should_end_call:
+        response.say(reply, voice="alice", language="en-US")
+        response.hangup()
+        return twiml_response(response)
+
     gather = Gather(
         input="speech",
         action="/process_speech",
