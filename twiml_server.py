@@ -3,6 +3,7 @@ from datetime import datetime
 
 from flask import Flask, Response, request
 from twilio.twiml.voice_response import Gather, VoiceResponse
+from patient import load_persona, patient_response
 
 app = Flask(__name__)
 
@@ -10,6 +11,8 @@ os.makedirs("transcripts", exist_ok=True)
 
 TRANSCRIPT_FILE = datetime.now().strftime("transcripts/voice_call_%Y%m%d_%H%M%S.txt")
 NO_SPEECH_COUNT = 0
+VOICE_SCENARIO_FILE = os.getenv("VOICE_SCENARIO_FILE", "new_patient.txt")
+load_persona(VOICE_SCENARIO_FILE)
 
 
 def save_turn(role, message):
@@ -83,16 +86,7 @@ def process_speech():
             response.hangup()
             return twiml_response(response)
 
-        elif "name" in speech_text:
-            reply = "My name is Sarah Johnson."
-        elif "birth" in speech_text or "date of birth" in speech_text:
-            reply = "My date of birth is January tenth, nineteen ninety two."
-        elif "insurance" in speech_text:
-            reply = "I have Blue Cross Blue Shield insurance."
-        elif "date" in speech_text or "day" in speech_text or "time" in speech_text:
-            reply = "Next Tuesday morning would work for me if you have availability."
-        else:
-            reply = "Yes, I can provide that information. What do you need from me?"
+        reply = patient_response(speech_result)
 
     save_turn("Athena", reply)
 

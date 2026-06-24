@@ -21,17 +21,38 @@ def load_persona(filename):
 def mock_response(clinic_message):
     message = clinic_message.lower()
 
+    if "happy to help" in message or "how can i help" in message:
+        return "I would like to schedule an appointment."
+    
+    if "how may i help" in message:
+        return "I would like to schedule an appointment."
+
     if "what brings you in" in message:
         return "I'm calling because I need help with my request today."
 
     if "medication" in message or "refill" in message:
         return "I need a refill for my prescription medication."
 
-    if "insurance" in message:
-        return "I recently changed insurance providers and need to update my information."
-
     if "name" in message:
         return "My name is Sarah Johnson."
+
+    if "date of birth" in message or "birth" in message or "dob" in message:
+        return "My date of birth is January tenth, nineteen ninety two."
+
+    if "insurance" in message:
+        return "I have Blue Cross Blue Shield insurance."
+
+    if "day" in message or "date" in message or "time" in message or "come in" in message or "appointment" in message:
+        return "Next Tuesday morning would work for me if you have availability."
+
+    if "phone" in message or "number" in message:
+        return "My phone number is four zero seven, three three four, five seven three two."
+
+    if "email" in message:
+        return "My email is sarah dot johnson at email dot com."
+
+    if "reason" in message or "visit" in message or "symptom" in message:
+        return "I would like to schedule a routine appointment with the clinic."
 
     return "Could you help me with that, please?"
 
