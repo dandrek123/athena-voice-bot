@@ -11,8 +11,21 @@ os.makedirs("transcripts", exist_ok=True)
 
 TRANSCRIPT_FILE = datetime.now().strftime("transcripts/voice_call_%Y%m%d_%H%M%S.txt")
 NO_SPEECH_COUNT = 0
+
 VOICE_SCENARIO_FILE = os.getenv("VOICE_SCENARIO_FILE", "new_patient.txt")
 load_persona(VOICE_SCENARIO_FILE)
+
+
+def get_opening_message():
+    scenario_name = VOICE_SCENARIO_FILE.lower()
+
+    if "refill" in scenario_name:
+        return "Hello, this is Athena. I need a refill for my prescription."
+
+    if "insurance" in scenario_name:
+        return "Hello, this is Athena. I need to update my insurance information."
+
+    return "Hello, this is Athena. I would like to schedule an appointment."
 
 
 def save_turn(role, message):
@@ -28,7 +41,7 @@ def twiml_response(response):
 def voice():
     response = VoiceResponse()
 
-    opening_message = "Hello, this is Athena. I would like to schedule an appointment."
+    opening_message = get_opening_message()
     save_turn("Athena", opening_message)
 
     gather = Gather(
