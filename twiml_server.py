@@ -25,6 +25,12 @@ def get_opening_message():
     if "insurance" in scenario_name:
         return "Hello, this is Athena. I need to update my insurance information."
 
+    if "cancel" in scenario_name:
+        return "Hello, this is Athena. I would like to cancel my appointment."
+
+    if "reschedule" in scenario_name:
+        return "Hello, this is Athena. I would like to reschedule my appointment."
+
     return "Hello, this is Athena. I would like to schedule an appointment."
 
 

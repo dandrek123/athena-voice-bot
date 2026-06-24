@@ -21,6 +21,9 @@ def load_persona(filename):
 def mock_response(clinic_message):
     message = clinic_message.lower()
 
+    if "member id" in message or "policy number" in message or "subscriber id" in message:
+        return "Yes, my member ID is B C B S one two three four five six."
+
     if "happy to help" in message or "how can i help" in message or "how may i help" in message:
         return "I would like to schedule an appointment."
 
