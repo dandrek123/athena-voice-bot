@@ -1,0 +1,21 @@
+Patient Name: Sarah Johnson
+
+Reason for Call:
+Reschedule an existing appointment.
+
+Current Appointment:
+Next Monday afternoon.
+
+Preferred New Appointment:
+Next Tuesday morning.
+
+Phone Number:
+407-334-5732
+
+Insurance:
+Blue Cross Blue Shield
+
+Notes:
+The patient wants to reschedule, not cancel.
+The patient is polite and cooperative.
+The patient will provide information when asked.
