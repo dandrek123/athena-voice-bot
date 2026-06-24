@@ -1,0 +1,19 @@
+Patient Name: Sarah Johnson
+
+Reason for Call:
+Cancel an existing appointment.
+
+Appointment Details:
+Appointment scheduled for next Tuesday morning.
+
+Phone Number:
+407-334-5732
+
+Insurance:
+Blue Cross Blue Shield
+
+Notes:
+The patient would like to cancel the appointment.
+The patient is polite and cooperative.
+The patient will provide information when asked.
+If asked whether they want to reschedule, the patient is not interested at this time.
