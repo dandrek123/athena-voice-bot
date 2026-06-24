@@ -9,6 +9,7 @@ app = Flask(__name__)
 os.makedirs("transcripts", exist_ok=True)
 
 TRANSCRIPT_FILE = datetime.now().strftime("transcripts/voice_call_%Y%m%d_%H%M%S.txt")
+NO_SPEECH_COUNT = 0
 
 
 def save_turn(role, message):
@@ -51,6 +52,7 @@ def voice():
 @app.route("/process_speech", methods=["GET", "POST"])
 def process_speech():
     response = VoiceResponse()
+    global NO_SPEECH_COUNT
 
     speech_result = request.form.get("SpeechResult", "").strip()
     save_turn("Agent", speech_result if speech_result else "[No speech detected]")
@@ -58,17 +60,39 @@ def process_speech():
     speech_text = speech_result.lower()
 
     if not speech_result:
-        reply = "I am sorry, I did not catch that. Could you repeat that?"
-    elif "name" in speech_text:
-        reply = "My name is Sarah Johnson."
-    elif "birth" in speech_text or "date of birth" in speech_text:
-        reply = "My date of birth is January tenth, nineteen ninety two."
-    elif "insurance" in speech_text:
-        reply = "I have Blue Cross Blue Shield insurance."
-    elif "date" in speech_text or "day" in speech_text or "time" in speech_text:
-        reply = "Next Tuesday morning would work for me if you have availability."
+        NO_SPEECH_COUNT += 1
+
+        if NO_SPEECH_COUNT == 1:
+            reply = "I am sorry, I did not catch that. Could you repeat that?"
+        elif NO_SPEECH_COUNT == 2:
+            reply = "I still cannot hear you clearly. Could you say that one more time?"
+        else:
+            closing_message = "I still cannot hear a response. Thank you for your time. Goodbye."
+            save_turn("Athena", closing_message)
+            response.say(closing_message, voice="alice", language="en-US")
+            response.hangup()
+            return twiml_response(response)
+
     else:
-        reply = "Yes, I can provide that information. What do you need from me?"
+        NO_SPEECH_COUNT = 0
+
+        if "thank you" in speech_text or "thanks" in speech_text or "goodbye" in speech_text or "bye" in speech_text:
+            closing_message = "You're welcome. Thank you for your time. Goodbye."
+            save_turn("Athena", closing_message)
+            response.say(closing_message, voice="alice", language="en-US")
+            response.hangup()
+            return twiml_response(response)
+
+        elif "name" in speech_text:
+            reply = "My name is Sarah Johnson."
+        elif "birth" in speech_text or "date of birth" in speech_text:
+            reply = "My date of birth is January tenth, nineteen ninety two."
+        elif "insurance" in speech_text:
+            reply = "I have Blue Cross Blue Shield insurance."
+        elif "date" in speech_text or "day" in speech_text or "time" in speech_text:
+            reply = "Next Tuesday morning would work for me if you have availability."
+        else:
+            reply = "Yes, I can provide that information. What do you need from me?"
 
     save_turn("Athena", reply)
 
