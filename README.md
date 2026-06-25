@@ -1,12 +1,28 @@
-# Athena Voice Bot Simulator
+# Athena Voice Bot
 
-AI-powered healthcare voice patient simulator built with Python, Flask, Twilio, and Google Gemini.
+AI-powered healthcare voice patient simulator built with **Python**, **Flask**, **Twilio Voice**, and **Google Gemini**.
 
-Athena simulates realistic patient phone calls to healthcare providers for testing appointment scheduling, prescription refills, insurance updates, patient registration, and other office workflows using conversational AI.
+Athena simulates realistic healthcare phone conversations for testing conversational AI, voice automation, and patient-service workflows. It supports multiple healthcare scenarios, automatic transcript generation, quality analysis, reporting, and a web dashboard for reviewing completed calls.
 
 ---
 
-## Features
+# Project Highlights
+
+- AI-powered healthcare voice assistant
+- Twilio Voice phone call integration
+- Google Gemini conversational AI
+- Speech-to-text and text-to-speech conversations
+- Automatic transcript generation
+- Interactive Dashboard
+- Analytics Dashboard
+- Automatic call reports
+- Call quality scoring
+- Warning detection
+- Multiple healthcare workflows
+
+---
+
+# Features
 
 - Interactive healthcare voice conversations
 - Six healthcare patient workflows
@@ -14,18 +30,21 @@ Athena simulates realistic patient phone calls to healthcare providers for testi
 - Command-line scenario selection
 - Twilio outbound phone calls
 - Flask webhook server
-- Speech-to-text conversations
-- Transcript logging
+- Speech recognition
 - Conversation memory
-- No-speech retry handling
-- Automatic call ending
+- Transcript logging
+- Automatic report generation
+- HTML report viewer
+- Analytics dashboard
+- Call quality scoring
+- Warning detection
 - Mock mode for offline development
-- Google Gemini AI integration
-- Modular scenario-based architecture
+- Google Gemini integration
+- Modular architecture
 
 ---
 
-## Supported Voice Workflows
+# Supported Voice Workflows
 
 - Appointment Scheduling
 - New Patient Registration
@@ -36,40 +55,80 @@ Athena simulates realistic patient phone calls to healthcare providers for testi
 
 ---
 
-## Architecture
+# Dashboard & Analytics
+
+Athena includes a built-in web dashboard for monitoring completed calls.
+
+### Dashboard
+
+- Browse completed call reports
+- View scenario information
+- View quality scores
+- View duration
+- Open detailed HTML reports
+
+### Analytics
+
+- Total calls
+- Completed calls
+- Success rate
+- Average quality score
+- Average call duration
+- Reports containing warnings
+- Most common scenario
+- Scenario usage statistics
+
+---
+
+# Architecture
 
 ```text
-                Phone Call
-                     │
-                     ▼
+                 Phone Call
+                      │
+                      ▼
              Twilio Voice API
-                     │
-                     ▼
+                      │
+                      ▼
             Flask Webhook Server
-                     │
-                     ▼
-          Scenario / Patient Persona
-                     │
-                     ▼
-         Patient Response Engine
-                     │
-                     ▼
-      Speech Response + Transcript Log
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+        ▼                           ▼
+ Scenario Engine             Dashboard
+ Patient Personas            Analytics
+ Conversation Memory         Report Viewer
+        │
+        ▼
+ Google Gemini AI
+        │
+        ▼
+Speech Response Engine
+Transcript Logging
+Report Generation
 ```
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 athena-voice-bot/
+
 ├── scenarios/
-│   ├── insurance_patient.txt
 │   ├── new_patient.txt
 │   ├── refill_patient.txt
+│   ├── insurance_patient.txt
 │   ├── cancel_patient.txt
 │   ├── reschedule_patient.txt
 │   └── new_registration_patient.txt
+│
+├── reports/
+├── transcripts/
+│
+├── templates/
+│   ├── dashboard.html
+│   ├── analytics.html
+│   └── report.html
 │
 ├── call_runner.py
 ├── twiml_server.py
@@ -86,7 +145,7 @@ athena-voice-bot/
 
 ---
 
-## Installation
+# Installation
 
 ```bash
 git clone https://github.com/dandrek123/athena-voice-bot.git
@@ -102,37 +161,35 @@ pip install -r requirements.txt
 
 ---
 
-## Environment Variables
+# Environment Variables
 
-Create a `.env` file in the project root.
+Create a `.env` file.
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 
 USE_MOCK_MODE=true
 
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
 
-TWILIO_PHONE_NUMBER=+10000000000
-TEST_TO_PHONE_NUMBER=+10000000000
+TWILIO_PHONE_NUMBER=+1000000000
+TEST_TO_PHONE_NUMBER=+1000000000
 
 VOICE_WEBHOOK_URL=https://your-ngrok-url.ngrok-free.app/voice
-
-VOICE_SCENARIO_FILE=new_patient.txt
 ```
 
 ---
 
-## Running Athena
+# Running Athena
 
-Start the Flask webhook:
+Start the Flask server:
 
 ```bash
 python twiml_server.py
 ```
 
-Place a voice call:
+Run a scenario:
 
 ```bash
 python call_runner.py --scenario appointment
@@ -151,40 +208,86 @@ python call_runner.py --scenario registration
 
 ---
 
-## Example Conversation
+# Automatic Report Generation
+
+Every completed call automatically generates:
+
+- Transcript
+- Call duration
+- Conversation statistics
+- Patient information collected
+- Quality score
+- Warning detection
+- Outcome summary
+
+Reports are available through the Athena Dashboard.
+
+---
+
+# Dashboard Preview
+
+## Dashboard
+
+![Dashboard](images/dashboard.png)
+
+## Analytics
+
+![Analytics](images/analytics.png)
+
+## HTML Report Viewer
+
+![Report Viewer](images/report.png)
+
+---
+
+# Example Conversation
 
 ```text
-Athena: Hello, this is Athena. I would like to schedule an appointment.
+Athena:
+Hello, this is Athena. I would like to schedule an appointment.
 
-Agent: What is your name?
+Agent:
+What is your name?
 
-Athena: My name is Sarah Johnson.
+Athena:
+My name is Sarah Johnson.
 
-Agent: What day would you like to come in?
+Agent:
+What day would you like to come in?
 
-Athena: Next Tuesday morning would work for me if you have availability.
+Athena:
+Next Tuesday morning would work for me if you have availability.
 
-Agent: What insurance do you have?
+Agent:
+What insurance do you have?
 
-Athena: I have Blue Cross Blue Shield insurance.
+Athena:
+I have Blue Cross Blue Shield insurance.
 
-Agent: What is your date of birth?
+Agent:
+What is your date of birth?
 
-Athena: My date of birth is January tenth, nineteen ninety two.
+Athena:
+My date of birth is January tenth, nineteen ninety two.
 
-Agent: Anything else?
+Agent:
+Anything else?
 
-Athena: No, that is all. Thank you.
+Athena:
+No, that is all. Thank you.
 ```
 
 ---
 
-## Technologies Used
+# Technologies Used
 
 - Python
 - Flask
 - Twilio Voice API
 - Google Gemini API
+- HTML
+- CSS
+- Jinja2
 - Python Dotenv
 - Speech Recognition
 - Prompt Engineering
@@ -192,36 +295,41 @@ Athena: No, that is all. Thank you.
 
 ---
 
-## Current Capabilities
+# Current Capabilities
 
 - Voice-based patient simulation
-- Multiple healthcare conversation workflows
-- Scenario-based personas
-- Transcript generation
 - Interactive speech conversations
+- Multiple healthcare workflows
+- Scenario-based patient personas
+- Transcript generation
+- Automatic report generation
+- Dashboard and analytics
 - Command-line scenario switching
 - Mock mode for offline testing
 - Modular architecture for future AI expansion
 
 ---
 
-## Roadmap
+# Roadmap
 
-- Automatic call reports
-- Conversation quality scoring
-- Live Gemini-powered conversations
-- Web dashboard
+- Interactive charts
+- Search and filter reports
+- PDF report export
+- Live Gemini conversations
 - Recording management
 - Additional healthcare workflows
 - Multi-language conversations
+- Real-time analytics
 - Pretty Good AI Challenge submission
 
 ---
 
-## Author
+# Author
 
 **D'Andre Knight**
 
 Computer Science graduate focused on Software Engineering, Artificial Intelligence, Automation, Cybersecurity, and Voice AI.
 
 GitHub: https://github.com/dandrek123
+
+LinkedIn: www.linkedin.com/in/d’andre-knight-358836251
