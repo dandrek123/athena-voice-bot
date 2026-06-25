@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Athena Report</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            margin: 40px;
+        }
+
+        h1 {
+            color: #1f4e79;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            line-height: 1.45;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #1565c0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<p><a href="/dashboard">← Back to Dashboard</a></p>
+
+<h1>📋 Athena Call Report</h1>
+<p>{{ report_name }}</p>
+
+<div class="report-card">
+    <pre>{{ report_content }}</pre>
+</div>
+
+</body>
+</html>

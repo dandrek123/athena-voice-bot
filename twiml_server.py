@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from flask import Flask, Response, request
+from flask import Flask, Response, abort, render_template, request
 from twilio.twiml.voice_response import Gather, VoiceResponse
 from patient import load_persona, patient_response
 
@@ -273,6 +273,139 @@ Transcript:
 
 def twiml_response(response):
     return Response(str(response), mimetype="text/xml")
+
+
+# Dashboard routes
+def get_report_files():
+    report_files = []
+
+    for filename in os.listdir("reports"):
+        if filename.startswith("call_report_") and filename.endswith(".txt"):
+            report_files.append(filename)
+
+    return sorted(report_files, reverse=True)
+
+
+def parse_report_summary(filename):
+    path = os.path.join("reports", filename)
+
+    with open(path, "r") as file:
+        content = file.read()
+
+    def get_value(label):
+        lines = content.splitlines()
+        for i, line in enumerate(lines):
+            stripped_line = line.strip()
+
+            if stripped_line == label and i + 1 < len(lines):
+                return lines[i + 1].strip()
+
+            if stripped_line.startswith(label):
+                value = stripped_line.replace(label, "", 1).strip()
+                if value:
+                    return value
+
+        return "Unknown"
+
+    return {
+        "filename": filename,
+        "scenario": get_value("Scenario:"),
+        "status": get_value("Status:"),
+        "duration": get_value("Duration:"),
+        "quality": get_value("Overall Score:"),
+        "date": get_value("Call Date:"),
+        "warnings": "⚠️" if "⚠️" in content else "✓",
+    }
+
+
+def calculate_analytics():
+    report_files = get_report_files()
+    reports = [parse_report_summary(file) for file in report_files]
+
+    valid_reports = [report for report in reports if report["scenario"] != "Unknown"]
+    total_calls = len(valid_reports)
+
+    completed_calls = sum(
+        1 for report in valid_reports
+        if "Completed" in report["status"]
+    )
+
+    warning_count = sum(
+        1 for report in valid_reports
+        if report["warnings"] == "⚠️"
+    )
+
+    quality_scores = []
+    durations = []
+    scenario_counts = {}
+
+    for report in valid_reports:
+        quality_text = report["quality"].replace("/100", "").strip()
+        if quality_text.isdigit():
+            quality_scores.append(int(quality_text))
+
+        duration_text = report["duration"].replace("seconds", "").strip()
+        if duration_text.isdigit():
+            durations.append(int(duration_text))
+
+        scenario = report["scenario"]
+        scenario_counts[scenario] = scenario_counts.get(scenario, 0) + 1
+
+    average_quality = round(sum(quality_scores) / len(quality_scores), 1) if quality_scores else 0
+    average_duration = round(sum(durations) / len(durations), 1) if durations else 0
+    success_rate = round((completed_calls / total_calls) * 100, 1) if total_calls else 0
+
+    most_common_scenario = "None"
+    if scenario_counts:
+        most_common_scenario = max(scenario_counts, key=scenario_counts.get)
+
+    return {
+        "total_calls": total_calls,
+        "completed_calls": completed_calls,
+        "warning_count": warning_count,
+        "average_quality": average_quality,
+        "average_duration": average_duration,
+        "success_rate": success_rate,
+        "most_common_scenario": most_common_scenario,
+        "scenario_counts": scenario_counts,
+    }
+
+
+@app.route("/dashboard")
+def dashboard():
+    report_files = get_report_files()
+    reports = [parse_report_summary(file) for file in report_files]
+    return render_template("dashboard.html", reports=reports)
+
+
+@app.route("/analytics")
+def analytics():
+    data = calculate_analytics()
+    return render_template("analytics.html", data=data)
+
+
+@app.route("/")
+def home():
+    return dashboard()
+
+
+@app.route("/report/<report_name>")
+def view_report(report_name):
+    safe_reports = get_report_files()
+
+    if report_name not in safe_reports:
+        abort(404)
+
+    report_path = os.path.join("reports", report_name)
+
+    with open(report_path, "r") as file:
+        report_content = file.read()
+
+    return render_template(
+        "report.html",
+        report_name=report_name,
+        report_content=report_content,
+    )
 
 
 @app.route("/voice", methods=["GET", "POST"])
