@@ -16,6 +16,8 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - Interactive Dashboard
 - Analytics Dashboard
 - Automatic call reports
+- SQLite-backed call storage
+- Database-driven dashboard and analytics
 - Call quality scoring
 - Warning detection
 - Multiple healthcare workflows
@@ -34,6 +36,8 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - Conversation memory
 - Transcript logging
 - Automatic report generation
+- SQLite database integration
+- Database-backed dashboard and analytics
 - HTML report viewer
 - Analytics dashboard
 - Call quality scoring
@@ -132,6 +136,7 @@ athena-voice-bot/
 │
 ├── call_runner.py
 ├── twiml_server.py
+├── database.py
 ├── patient.py
 ├── logger.py
 ├── summarizer.py
@@ -224,6 +229,29 @@ Reports are available through the Athena Dashboard.
 
 ---
 
+# SQLite-Backed Reporting
+
+Athena now stores completed call data in a local SQLite database.
+
+The database stores:
+
+- Scenario name
+- Call status
+- Quality score
+- Duration
+- Warning count
+- Transcript text
+- Outcome summary
+- Report path
+- Transcript path
+- Timestamp
+
+The dashboard and analytics pages read from SQLite, making call history easier to manage, analyze, and expand in future versions.
+
+Local database files are ignored by Git using `.gitignore`.
+
+---
+
 # Dashboard Preview
 
 ## Dashboard
@@ -307,6 +335,8 @@ No, that is all. Thank you.
 - Command-line scenario switching
 - Mock mode for offline testing
 - Modular architecture for future AI expansion
+- SQLite-backed call history
+- Database-driven dashboard and analytics
 
 ---
 
@@ -319,7 +349,7 @@ No, that is all. Thank you.
 - Recording management
 - Additional healthcare workflows
 - Multi-language conversations
-- Real-time analytics
+- Advanced analytics charts
 - Pretty Good AI Challenge submission
 
 ---
