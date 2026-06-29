@@ -361,6 +361,36 @@ def get_database_reports(calls=None):
     return reports
 
 
+def calculate_dashboard_summary():
+    calls = get_all_calls()
+    total_calls = len(calls)
+
+    completed_calls = sum(
+        1 for call in calls
+        if "Completed" in call["status"]
+    )
+
+    warning_count = sum(
+        1 for call in calls
+        if call["warnings_count"] > 0
+    )
+
+    quality_scores = [
+        call["quality_score"]
+        for call in calls
+        if call["quality_score"] is not None
+    ]
+
+    average_quality = round(sum(quality_scores) / len(quality_scores), 1) if quality_scores else 0
+
+    return {
+        "total_calls": total_calls,
+        "completed_calls": completed_calls,
+        "average_quality": average_quality,
+        "warning_count": warning_count,
+    }
+
+
 def calculate_analytics():
     calls = get_all_calls()
     total_calls = len(calls)
@@ -436,7 +466,14 @@ def dashboard():
         "min_quality": min_quality,
     }
 
-    return render_template("dashboard.html", reports=reports, filters=filters)
+    dashboard_stats = calculate_dashboard_summary()
+
+    return render_template(
+        "dashboard.html",
+        reports=reports,
+        filters=filters,
+        dashboard_stats=dashboard_stats,
+    )
 
 
 @app.route("/analytics")
