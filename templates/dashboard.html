@@ -92,6 +92,20 @@
             padding: 10px 12px;
         }
 
+        .export-button {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: #2e7d32;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .export-button:hover {
+            background: #388e3c;
+        }
+
         .card {
             background: white;
             border-radius: 12px;
@@ -159,6 +173,7 @@
 
             <button class="filter-button" type="submit">Search</button>
             <a class="clear-link" href="/dashboard">Clear</a>
+            <a class="export-button" href="/export/calls.csv">Export CSV</a>
         </div>
     </form>
 </div>

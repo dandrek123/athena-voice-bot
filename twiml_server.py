@@ -1,3 +1,5 @@
+import csv
+import io
 import os
 from datetime import datetime
 
@@ -441,6 +443,45 @@ def dashboard():
 def analytics():
     data = calculate_analytics()
     return render_template("analytics.html", data=data)
+
+
+# CSV export route for calls
+@app.route("/export/calls.csv")
+def export_calls_csv():
+    calls = get_all_calls()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "id",
+        "scenario",
+        "status",
+        "quality_score",
+        "duration_seconds",
+        "warnings_count",
+        "created_at",
+        "report_path",
+        "transcript_path",
+    ])
+
+    for call in calls:
+        writer.writerow([
+            call["id"],
+            call["scenario"],
+            call["status"],
+            call["quality_score"],
+            call["duration_seconds"],
+            call["warnings_count"],
+            call["created_at"],
+            call["report_path"],
+            call["transcript_path"],
+        ])
+
+    response = Response(output.getvalue(), mimetype="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=athena_calls.csv"
+
+    return response
 
 
 @app.route("/")
