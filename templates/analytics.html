@@ -58,6 +58,40 @@
         ul{
             line-height:2;
         }
+
+        .chart-row{
+            margin-bottom:18px;
+        }
+
+        .chart-label{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:6px;
+        }
+
+        .bar-progress{
+            width:100%;
+            height:18px;
+            border:none;
+            border-radius:20px;
+            overflow:hidden;
+            background:#e8edf3;
+        }
+
+        .bar-progress::-webkit-progress-bar{
+            background:#e8edf3;
+            border-radius:20px;
+        }
+
+        .bar-progress::-webkit-progress-value{
+            background:#1f4e79;
+            border-radius:20px;
+        }
+
+        .bar-progress::-moz-progress-bar{
+            background:#1f4e79;
+            border-radius:20px;
+        }
     </style>
 
 </head>
@@ -118,15 +152,22 @@
 
 <h2>Scenario Usage</h2>
 
-<ul>
+{% if data.scenario_counts %}
+    {% set max_count = data.scenario_counts.values() | max %}
 
-{% for scenario, count in data.scenario_counts.items() %}
+    {% for scenario, count in data.scenario_counts.items() %}
+    <div class="chart-row">
+        <div class="chart-label">
+            <strong>{{ scenario }}</strong>
+            <span>{{ count }} call(s)</span>
+        </div>
 
-<li><strong>{{ scenario }}</strong> — {{ count }} call(s)</li>
-
-{% endfor %}
-
-</ul>
+        <progress class="bar-progress" value="{{ count }}" max="{{ max_count }}"></progress>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No scenario data available yet.</p>
+{% endif %}
 
 </div>
 
