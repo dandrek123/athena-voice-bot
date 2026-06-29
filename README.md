@@ -81,6 +81,7 @@ Athena includes a built-in web dashboard for monitoring completed calls.
 - Reports containing warnings
 - Most common scenario
 - Scenario usage statistics
+- Scenario usage chart
 
 ---
 
@@ -337,13 +338,14 @@ No, that is all. Thank you.
 - Modular architecture for future AI expansion
 - SQLite-backed call history
 - Database-driven dashboard and analytics
+- Visual analytics chart for scenario usage
 
 ---
 
 # Roadmap
 
-- Interactive charts
-- Search and filter reports
+- More interactive charts
+- Advanced search and filter options
 - PDF report export
 - Live Gemini conversations
 - Recording management
