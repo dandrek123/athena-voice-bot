@@ -4,11 +4,14 @@ from datetime import datetime
 from flask import Flask, Response, abort, render_template, request
 from twilio.twiml.voice_response import Gather, VoiceResponse
 from patient import load_persona, patient_response
+from database import init_db, save_call_report, get_all_calls
 
 app = Flask(__name__)
 
 os.makedirs("transcripts", exist_ok=True)
 os.makedirs("reports", exist_ok=True)
+
+init_db()
 
 TRANSCRIPT_FILE = datetime.now().strftime("transcripts/voice_call_%Y%m%d_%H%M%S.txt")
 NO_SPEECH_COUNT = 0
@@ -267,7 +270,22 @@ Transcript:
     with open(report_file, "w") as file:
         file.write(report)
 
+    warning_count = 0 if warnings == "✓ No major conversation warnings detected." else warnings.count("⚠️")
+
+    save_call_report(
+        scenario=scenario_display_name,
+        status=outcome,
+        quality_score=quality_score,
+        duration_seconds=duration_seconds,
+        warnings_count=warning_count,
+        transcript=transcript,
+        summary=outcome_summary,
+        report_path=report_file,
+        transcript_path=TRANSCRIPT_FILE,
+    )
+
     print(f"Call report saved to: {report_file}")
+    print("Call report saved to database.")
     return report_file
 
 
@@ -318,37 +336,57 @@ def parse_report_summary(filename):
     }
 
 
-def calculate_analytics():
-    report_files = get_report_files()
-    reports = [parse_report_summary(file) for file in report_files]
+def get_database_reports():
+    calls = get_all_calls()
+    reports = []
 
-    valid_reports = [report for report in reports if report["scenario"] != "Unknown"]
-    total_calls = len(valid_reports)
+    for call in calls:
+        report_path = call["report_path"] or ""
+        filename = os.path.basename(report_path) if report_path else ""
+
+        reports.append({
+            "filename": filename,
+            "scenario": call["scenario"],
+            "status": call["status"],
+            "duration": f"{call['duration_seconds']} seconds",
+            "quality": f"{call['quality_score']}/100",
+            "date": call["created_at"],
+            "warnings": "⚠️" if call["warnings_count"] > 0 else "✓",
+        })
+
+    return reports
+
+
+def calculate_analytics():
+    calls = get_all_calls()
+    total_calls = len(calls)
 
     completed_calls = sum(
-        1 for report in valid_reports
-        if "Completed" in report["status"]
+        1 for call in calls
+        if "Completed" in call["status"]
     )
 
     warning_count = sum(
-        1 for report in valid_reports
-        if report["warnings"] == "⚠️"
+        1 for call in calls
+        if call["warnings_count"] > 0
     )
 
-    quality_scores = []
-    durations = []
+    quality_scores = [
+        call["quality_score"]
+        for call in calls
+        if call["quality_score"] is not None
+    ]
+
+    durations = [
+        call["duration_seconds"]
+        for call in calls
+        if call["duration_seconds"] is not None
+    ]
+
     scenario_counts = {}
 
-    for report in valid_reports:
-        quality_text = report["quality"].replace("/100", "").strip()
-        if quality_text.isdigit():
-            quality_scores.append(int(quality_text))
-
-        duration_text = report["duration"].replace("seconds", "").strip()
-        if duration_text.isdigit():
-            durations.append(int(duration_text))
-
-        scenario = report["scenario"]
+    for call in calls:
+        scenario = call["scenario"]
         scenario_counts[scenario] = scenario_counts.get(scenario, 0) + 1
 
     average_quality = round(sum(quality_scores) / len(quality_scores), 1) if quality_scores else 0
@@ -373,8 +411,7 @@ def calculate_analytics():
 
 @app.route("/dashboard")
 def dashboard():
-    report_files = get_report_files()
-    reports = [parse_report_summary(file) for file in report_files]
+    reports = get_database_reports()
     return render_template("dashboard.html", reports=reports)
 
 
