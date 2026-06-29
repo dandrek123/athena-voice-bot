@@ -31,11 +31,56 @@
             color: #1565c0;
             font-weight: bold;
         }
+
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .print-button {
+            border: none;
+            border-radius: 8px;
+            background: #1f4e79;
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .print-button:hover {
+            background: #2d6aa3;
+        }
+
+        @media print {
+            body {
+                background: white;
+                margin: 20px;
+            }
+
+            .top-actions {
+                display: none;
+            }
+
+            .report-card {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+            }
+
+            h1 {
+                color: black;
+            }
+        }
     </style>
 </head>
 <body>
 
-<p><a href="/dashboard">← Back to Dashboard</a></p>
+<div class="top-actions">
+    <a href="/dashboard">← Back to Dashboard</a>
+    <button class="print-button" onclick="window.print()">Print / Save as PDF</button>
+</div>
 
 <h1>📋 Athena Call Report</h1>
 <p>{{ report_name }}</p>
