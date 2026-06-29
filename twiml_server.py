@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, Response, abort, render_template, request
 from twilio.twiml.voice_response import Gather, VoiceResponse
 from patient import load_persona, patient_response
-from database import init_db, save_call_report, get_all_calls
+from database import init_db, save_call_report, get_all_calls, search_calls
 
 app = Flask(__name__)
 
@@ -336,8 +336,10 @@ def parse_report_summary(filename):
     }
 
 
-def get_database_reports():
-    calls = get_all_calls()
+def get_database_reports(calls=None):
+    if calls is None:
+        calls = get_all_calls()
+
     reports = []
 
     for call in calls:
@@ -411,8 +413,28 @@ def calculate_analytics():
 
 @app.route("/dashboard")
 def dashboard():
-    reports = get_database_reports()
-    return render_template("dashboard.html", reports=reports)
+    scenario = request.args.get("scenario", "").strip()
+    status = request.args.get("status", "").strip()
+    warnings_only = request.args.get("warnings_only") == "on"
+    min_quality = request.args.get("min_quality", "").strip()
+
+    calls = search_calls(
+        scenario=scenario or None,
+        status=status or None,
+        warnings_only=warnings_only,
+        min_quality=min_quality or None,
+    )
+
+    reports = get_database_reports(calls)
+
+    filters = {
+        "scenario": scenario,
+        "status": status,
+        "warnings_only": warnings_only,
+        "min_quality": min_quality,
+    }
+
+    return render_template("dashboard.html", reports=reports, filters=filters)
 
 
 @app.route("/analytics")

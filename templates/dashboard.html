@@ -33,6 +33,65 @@
             background: #2d6aa3;
         }
 
+        .filter-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.1);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .filter-group input {
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            min-width: 180px;
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 9px;
+        }
+
+        .filter-button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #1f4e79;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .filter-button:hover {
+            background: #2d6aa3;
+        }
+
+        .clear-link {
+            display: inline-block;
+            padding: 10px 12px;
+        }
+
         .card {
             background: white;
             border-radius: 12px;
@@ -74,6 +133,36 @@
 <div class="nav">
     <a href="/analytics">📊 Analytics</a>
 </div>
+
+<div class="filter-card">
+    <form method="GET" action="/dashboard">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="scenario">Scenario</label>
+                <input type="text" id="scenario" name="scenario" placeholder="registration, refill..." value="{{ filters.scenario if filters else '' }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="status">Status</label>
+                <input type="text" id="status" name="status" placeholder="completed, ended..." value="{{ filters.status if filters else '' }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="min_quality">Minimum Quality</label>
+                <input type="number" id="min_quality" name="min_quality" min="0" max="100" placeholder="80" value="{{ filters.min_quality if filters else '' }}">
+            </div>
+
+            <div class="filter-group checkbox-group">
+                <input type="checkbox" id="warnings_only" name="warnings_only" {% if filters and filters.warnings_only %}checked{% endif %}>
+                <label for="warnings_only">Warnings only</label>
+            </div>
+
+            <button class="filter-button" type="submit">Search</button>
+            <a class="clear-link" href="/dashboard">Clear</a>
+        </div>
+    </form>
+</div>
+
 <p>Recent Call Reports</p>
 
 {% for report in reports %}
@@ -91,6 +180,12 @@
     </p>
 </div>
 {% endfor %}
+
+{% if reports|length == 0 %}
+<div class="card">
+    <p>No call reports match the current filters.</p>
+</div>
+{% endif %}
 
 </body>
 </html>

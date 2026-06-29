@@ -92,3 +92,35 @@ def get_all_calls():
     conn.close()
 
     return rows
+
+
+def search_calls(scenario=None, status=None, warnings_only=False, min_quality=None):
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    query = "SELECT * FROM calls WHERE 1=1"
+    params = []
+
+    if scenario:
+        query += " AND scenario LIKE ?"
+        params.append(f"%{scenario}%")
+
+    if status:
+        query += " AND status LIKE ?"
+        params.append(f"%{status}%")
+
+    if warnings_only:
+        query += " AND warnings_count > 0"
+
+    if min_quality:
+        query += " AND quality_score >= ?"
+        params.append(int(min_quality))
+
+    query += " ORDER BY created_at DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+
+    return rows
