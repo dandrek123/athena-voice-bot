@@ -19,6 +19,7 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - SQLite-backed call storage
 - Database-driven dashboard and analytics
 - CSV export for call history
+- Print-friendly PDF report export
 - Call quality scoring
 - Warning detection
 - Multiple healthcare workflows
@@ -40,6 +41,7 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - SQLite database integration
 - Database-backed dashboard and analytics
 - CSV call report export
+- Print / Save as PDF report option
 - HTML report viewer
 - Analytics dashboard
 - Call quality scoring
@@ -72,6 +74,7 @@ Athena includes a built-in web dashboard for monitoring completed calls.
 - View quality scores
 - View duration
 - Open detailed HTML reports
+- Print or save reports as PDF
 - Export call history to CSV
 
 ### Analytics
@@ -342,6 +345,7 @@ No, that is all. Thank you.
 - SQLite-backed call history
 - Database-driven dashboard and analytics
 - CSV export for stored call reports
+- Print-friendly PDF export for detailed reports
 - Visual analytics chart for scenario usage
 
 ---
@@ -350,7 +354,6 @@ No, that is all. Thank you.
 
 - More interactive charts
 - Advanced search and filter options
-- PDF report export
 - Live Gemini conversations
 - Recording management
 - Additional healthcare workflows
