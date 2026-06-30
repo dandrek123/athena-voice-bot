@@ -363,7 +363,6 @@ No, that is all. Thank you.
 - Additional healthcare workflows
 - Multi-language conversations
 - Advanced analytics charts
-- Pretty Good AI Challenge submission
 
 ---
 
