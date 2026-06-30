@@ -165,6 +165,31 @@
             color: #1565c0;
             font-weight: bold;
         }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .delete-form {
+            margin: 0;
+        }
+
+        .delete-button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: #c62828;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background: #d32f2f;
+        }
     </style>
 </head>
 <body>
@@ -238,9 +263,13 @@
     <span class="badge">Quality: {{ report.quality }}</span>
     <span class="badge">Duration: {{ report.duration }}</span>
 
-    <p>
+    <div class="card-actions">
         <a href="/report/{{ report.filename }}">View Full Report</a>
-    </p>
+
+        <form class="delete-form" method="POST" action="/delete-call/{{ report.id }}" onsubmit="return confirm('Delete this call report from the dashboard?');">
+            <button class="delete-button" type="submit">Delete</button>
+        </form>
+    </div>
 </div>
 {% endfor %}
 

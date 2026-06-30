@@ -3,10 +3,10 @@ import io
 import os
 from datetime import datetime
 
-from flask import Flask, Response, abort, render_template, request
+from flask import Flask, Response, abort, redirect, render_template, request
 from twilio.twiml.voice_response import Gather, VoiceResponse
 from patient import load_persona, patient_response
-from database import init_db, save_call_report, get_all_calls, search_calls
+from database import init_db, save_call_report, get_all_calls, search_calls, delete_call
 
 app = Flask(__name__)
 
@@ -349,6 +349,7 @@ def get_database_reports(calls=None):
         filename = os.path.basename(report_path) if report_path else ""
 
         reports.append({
+            "id": call["id"],
             "filename": filename,
             "scenario": call["scenario"],
             "status": call["status"],
@@ -480,6 +481,13 @@ def dashboard():
 def analytics():
     data = calculate_analytics()
     return render_template("analytics.html", data=data)
+
+
+# Route to delete a call by ID
+@app.route("/delete-call/<int:call_id>", methods=["POST"])
+def delete_call_route(call_id):
+    delete_call(call_id)
+    return redirect("/dashboard")
 
 
 # CSV export route for calls

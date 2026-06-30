@@ -124,3 +124,13 @@ def search_calls(scenario=None, status=None, warnings_only=False, min_quality=No
     conn.close()
 
     return rows
+
+
+def delete_call(call_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM calls WHERE id = ?", (call_id,))
+
+    conn.commit()
+    conn.close()
