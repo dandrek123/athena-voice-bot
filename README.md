@@ -20,6 +20,7 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - Database-driven dashboard and analytics
 - CSV export for call history
 - Print-friendly PDF report export
+- Dashboard delete action for call records
 - Call quality scoring
 - Warning detection
 - Multiple healthcare workflows
@@ -42,6 +43,7 @@ Athena simulates realistic healthcare phone conversations for testing conversati
 - Database-backed dashboard and analytics
 - CSV call report export
 - Print / Save as PDF report option
+- Dashboard delete action for call records
 - HTML report viewer
 - Analytics dashboard
 - Call quality scoring
@@ -76,6 +78,7 @@ Athena includes a built-in web dashboard for monitoring completed calls.
 - Open detailed HTML reports
 - Print or save reports as PDF
 - Export call history to CSV
+- Delete stored call records from the dashboard
 
 ### Analytics
 
@@ -346,6 +349,7 @@ No, that is all. Thank you.
 - Database-driven dashboard and analytics
 - CSV export for stored call reports
 - Print-friendly PDF export for detailed reports
+- Dashboard-based call record deletion
 - Visual analytics chart for scenario usage
 
 ---
